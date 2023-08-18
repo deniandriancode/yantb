@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Login</title>
+  </head>
+  <body>
+
+    <form action="#" th:action="@{/login}" method="post" th:object="${blogUserDto}">
+      <p th:if="${error}">Invalid username or password</p>
+      <label for="username">Username
+	<input name="username" id="username" type="text" th:field="*{username}"/>
+      </label><br/>
+      <label for="password">Password
+	<input name="password" id="password" type="password" th:field="*{password}"/>
+      </label><br/>
+      <button type="submit">Login</button>
+    </form>
+    
+  </body>
+</html>
