@@ -13,8 +13,8 @@ public class BlogUserDto {
 	@Email
 	private String email;
 
-	@NotEmpty(message = "Password cannot be empty")
-	@Size(min = 6, max = 30)
+	@NotEmpty
+	@Size(min = 3, max = 30)
 	private String password;
 
 	public BlogUserDto(String username, String email, String password) {

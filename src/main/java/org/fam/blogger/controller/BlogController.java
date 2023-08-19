@@ -1,6 +1,11 @@
 package org.fam.blogger.controller;
 
+import java.util.Optional;
+
 import org.fam.blogger.dto.BlogUserDto;
+import org.fam.blogger.entity.BlogUser;
+import org.fam.blogger.service.BlogService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -13,14 +18,16 @@ import jakarta.validation.Valid;
 @Controller
 public class BlogController {
 
+	@Autowired
+	BlogService blogService;
+
 	@GetMapping("/")
 	public String homePage() {
 		return "home";
 	}
 
 	@GetMapping("/login")
-	public String loginFormGet(BlogUserDto blogUserDto, Model model) {
-		model.addAttribute("error", false);
+	public String loginFormGet(BlogUserDto blogUserDto) {
 		return "login";
 	}
 
@@ -34,22 +41,31 @@ public class BlogController {
 		return "dashboard";
 	}
 
-	@PostMapping("/login")
-	public String loginProcess(@Valid @ModelAttribute("blogUserDto") BlogUserDto blogUserDto,
-			BindingResult bindingResult, Model model) {
-		if (bindingResult.hasFieldErrors("username") || bindingResult.hasFieldErrors("password")) {
-			model.addAttribute("error", true);
-			return "login";
-		}
-		return "redirect:/";
-	}
+	// @PostMapping("/login")
+	// public String loginProcess(@Valid @ModelAttribute("blogUserDto") BlogUserDto blogUserDto,
+	// 		BindingResult bindingResult, Model model) {
+	// 	if (bindingResult.hasFieldErrors("email") || bindingResult.hasFieldErrors("password")) {
+	// 		model.addAttribute("error", true);
+	// 		return "login";
+	// 	}
+	// 	return "redirect:/";
+	// }
 
 	@PostMapping("/register")
 	public String registerProcess(@Valid @ModelAttribute("blogUserDto") BlogUserDto blogUserDto,
-			BindingResult bindingResult) {
+			BindingResult bindingResult, Model model) {
 		if (bindingResult.hasErrors()) {
 			return "register";
 		}
+
+		Optional<BlogUser> existingUser = blogService.findUserByEmail(blogUserDto.getEmail());
+		if (existingUser.isPresent()) {
+			model.addAttribute("userExistsError", true);
+			return "register";
+		}
+
+		blogService.saveUser(blogUserDto);
+
 		return "redirect:/";
 	}
 
