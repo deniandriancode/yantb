@@ -41,16 +41,6 @@ public class BlogController {
 		return "dashboard";
 	}
 
-	// @PostMapping("/login")
-	// public String loginProcess(@Valid @ModelAttribute("blogUserDto") BlogUserDto blogUserDto,
-	// 		BindingResult bindingResult, Model model) {
-	// 	if (bindingResult.hasFieldErrors("email") || bindingResult.hasFieldErrors("password")) {
-	// 		model.addAttribute("error", true);
-	// 		return "login";
-	// 	}
-	// 	return "redirect:/";
-	// }
-
 	@PostMapping("/register")
 	public String registerProcess(@Valid @ModelAttribute("blogUserDto") BlogUserDto blogUserDto,
 			BindingResult bindingResult, Model model) {

@@ -8,6 +8,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
+// TODO setup admin's stuff, for now focus on user
+
 @Configuration
 @EnableWebSecurity
 public class BlogSecurity {
@@ -26,6 +28,8 @@ public class BlogSecurity {
 						.requestMatchers("/login/**").permitAll()
 						.requestMatchers("/register/**").permitAll()
 						.requestMatchers("/dashboard").hasAnyRole("ADMIN", "USER")
+						.requestMatchers("/user/blog/new").hasRole("USER")
+						.requestMatchers("/admin/blog/new").hasRole("ADMIN")
 						.anyRequest().authenticated())
 				.formLogin((form) -> form
 						.loginPage("/login")

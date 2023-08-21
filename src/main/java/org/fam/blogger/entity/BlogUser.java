@@ -13,6 +13,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 
@@ -38,7 +39,10 @@ public class BlogUser {
 	@JoinTable(name = "blog_users_roles_tbl", joinColumns = {
 			@JoinColumn(name = "blog_user_id", referencedColumnName = "id") }, inverseJoinColumns = {
 					@JoinColumn(name = "blog_role_id", referencedColumnName = "id") })
-	List<BlogRole> blogRoles = new ArrayList<>();
+	private List<BlogRole> blogRoles = new ArrayList<>();
+
+	@OneToMany(mappedBy = "author")
+	private List<BlogPost> blogPosts = new ArrayList<>();
 
 	public BlogUser() {
 
