@@ -1,11 +1,17 @@
 package org.fam.blogger.controller;
 
+import java.util.List;
 import java.util.Optional;
 
+import org.fam.blogger.dto.BlogPostDto;
 import org.fam.blogger.dto.BlogUserDto;
+import org.fam.blogger.entity.BlogPost;
 import org.fam.blogger.entity.BlogUser;
 import org.fam.blogger.service.BlogService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -23,7 +29,10 @@ public class BlogController {
 
 	@GetMapping("/")
 	public String homePage() {
-		return "home";
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (authentication instanceof AnonymousAuthenticationToken)
+			return "home";
+		return "home-auth";
 	}
 
 	@GetMapping("/login")
@@ -37,8 +46,17 @@ public class BlogController {
 	}
 
 	@GetMapping("/dashboard")
-	public String dashboardGet() {
+	public String dashboardGet(Model model) {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String email = authentication.getName();
+		List<BlogPost> blogPostList = blogService.getAllBlogPostWithEmail(email);
+		model.addAttribute("blogs", blogPostList);
 		return "dashboard";
+	}
+
+	@GetMapping("/blog/new")
+	public String userNewBlogForm(BlogPostDto blogPostDto) {
+		return "user-blog-new";
 	}
 
 	@PostMapping("/register")
@@ -56,7 +74,19 @@ public class BlogController {
 
 		blogService.saveUser(blogUserDto);
 
-		return "redirect:/";
+		return "redirect:/login";
+	}
+
+	@PostMapping("/blog/new")
+	public String postNewBlogpost(@Valid @ModelAttribute("blogPostDto") BlogPostDto blogPostDto,
+			BindingResult bindingResult) {
+		if (bindingResult.hasErrors()) {
+			return "user-blog-new";
+		}
+
+		blogService.saveBlogPost(blogPostDto);
+
+		return "redirect:/dashboard";
 	}
 
 }

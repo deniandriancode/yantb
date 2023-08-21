@@ -8,6 +8,14 @@
   <body>
 
     <h1>Dashboard</h1>
+
+    <a th:href="@{/blog/new}">Create New Blog Post</a>
+
+    <section>
+      <ul th:each="blog : ${blogs}">
+	<li th:text="${blog.title}"></li>
+      </ul>
+    </section>
     
   </body>
 </html>

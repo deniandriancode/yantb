@@ -19,6 +19,9 @@ public class BlogPost {
 	private Long id;
 
 	@NotEmpty
+	private String title;
+
+	@NotEmpty
 	@Column(columnDefinition = "TEXT")
 	private String content;
 
@@ -30,7 +33,8 @@ public class BlogPost {
 
 	}
 
-	public BlogPost(String content, BlogUser author) {
+	public BlogPost(String title, String content, BlogUser author) {
+		this.title = title;
 		this.content = content;
 		this.author = author;
 	}
@@ -57,6 +61,14 @@ public class BlogPost {
 
 	public void setAuthor(BlogUser author) {
 		this.author = author;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
 	}
 
 }

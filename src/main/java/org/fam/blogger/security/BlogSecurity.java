@@ -2,6 +2,7 @@ package org.fam.blogger.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -12,6 +13,7 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class BlogSecurity {
 
 	@Bean
@@ -28,7 +30,7 @@ public class BlogSecurity {
 						.requestMatchers("/login/**").permitAll()
 						.requestMatchers("/register/**").permitAll()
 						.requestMatchers("/dashboard").hasAnyRole("ADMIN", "USER")
-						.requestMatchers("/user/blog/new").hasRole("USER")
+						.requestMatchers("/blog/new").hasRole("USER")
 						.requestMatchers("/admin/blog/new").hasRole("ADMIN")
 						.anyRequest().authenticated())
 				.formLogin((form) -> form
