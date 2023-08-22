@@ -2,6 +2,7 @@ package org.fam.blogger.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -31,6 +32,7 @@ public class BlogSecurity {
 						.requestMatchers("/register/**").permitAll()
 						.requestMatchers("/dashboard").hasAnyRole("ADMIN", "USER")
 						.requestMatchers("/blog/new").hasRole("USER")
+						.requestMatchers(HttpMethod.GET, "/blog/*/post/*").permitAll()
 						.requestMatchers("/admin/blog/new").hasRole("ADMIN")
 						.anyRequest().authenticated())
 				.formLogin((form) -> form

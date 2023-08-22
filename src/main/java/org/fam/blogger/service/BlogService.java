@@ -8,6 +8,8 @@ import org.fam.blogger.dto.BlogUserDto;
 import org.fam.blogger.entity.BlogPost;
 import org.fam.blogger.entity.BlogUser;
 
+// TODO create a unique slugifier function
+
 public interface BlogService {
 
 	Optional<BlogUser> findUserByUsername(String username);
@@ -19,5 +21,11 @@ public interface BlogService {
 	void saveBlogPost(BlogPostDto blogPostDto);
 
 	List<BlogPost> getAllBlogPostWithEmail(String email);
+
+	BlogPost getBlogPostById(Long id);
+
+	Optional<BlogUser> getCurrentLoggedInUser();
+
+	boolean isLoggedIn();
 
 }

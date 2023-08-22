@@ -14,6 +14,7 @@ import org.fam.blogger.repository.BlogPostRepository;
 import org.fam.blogger.repository.BlogRoleRepository;
 import org.fam.blogger.repository.BlogUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -63,16 +64,12 @@ public class BlogServiceImpl implements BlogService {
 
 	@Override
 	public void saveBlogPost(BlogPostDto blogPostDto) {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		// if (!(authentication instanceof AnonymousAuthenticationToken)) {
-		String currentUsername = authentication.getName();
-		Optional<BlogUser> blogUser = findUserByEmail(currentUsername);
+		Optional<BlogUser> blogUser = getCurrentLoggedInUser();
 		BlogPost newBlogPost = new BlogPost(
 				blogPostDto.getTitle(),
 				blogPostDto.getContent(),
 				blogUser.get());
 		blogPostRepository.save(newBlogPost);
-		// }
 	}
 
 	@Override
@@ -80,6 +77,28 @@ public class BlogServiceImpl implements BlogService {
 		BlogUser author = findUserByEmail(email).get();
 		List<BlogPost> blogPostList = blogPostRepository.findByAuthor(author);
 		return blogPostList;
+	}
+
+	@Override
+	public BlogPost getBlogPostById(Long id) {
+		Optional<BlogPost> postRetrieved = blogPostRepository.findById(id);
+		return postRetrieved.orElseGet(() -> new BlogPost());
+	}
+
+	@Override
+	public Optional<BlogUser> getCurrentLoggedInUser() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (authentication instanceof AnonymousAuthenticationToken)
+			return Optional.empty();
+
+		String email = authentication.getName();
+		Optional<BlogUser> currentLoggedInUser = findUserByEmail(email);
+		return currentLoggedInUser;
+	}
+
+	@Override
+	public boolean isLoggedIn() {
+		return getCurrentLoggedInUser().isPresent();
 	}
 
 }

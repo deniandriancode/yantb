@@ -9,7 +9,6 @@ import org.fam.blogger.entity.BlogPost;
 import org.fam.blogger.entity.BlogUser;
 import org.fam.blogger.service.BlogService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -17,6 +16,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import jakarta.validation.Valid;
@@ -29,20 +29,17 @@ public class BlogController {
 
 	@GetMapping("/")
 	public String homePage() {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		if (authentication instanceof AnonymousAuthenticationToken)
-			return "home";
-		return "home-auth";
+		return blogService.isLoggedIn() ? "home-auth" : "home";
 	}
 
 	@GetMapping("/login")
 	public String loginFormGet(BlogUserDto blogUserDto) {
-		return "login";
+		return blogService.isLoggedIn() ? "redirect:/dashboard" : "login";
 	}
 
 	@GetMapping("/register")
 	public String registerFormGet(BlogUserDto blogUserDto) {
-		return "register";
+		return blogService.isLoggedIn() ? "redirect:/dashboard" : "register";
 	}
 
 	@GetMapping("/dashboard")
@@ -57,6 +54,17 @@ public class BlogController {
 	@GetMapping("/blog/new")
 	public String userNewBlogForm(BlogPostDto blogPostDto) {
 		return "user-blog-new";
+	}
+
+	@GetMapping("/blog/{username}/post/{slug}")
+	public String getBlogPostDetail(@PathVariable("username") String username, @PathVariable("slug") String slug,
+			Model model) {
+		if (blogService.isLoggedIn())
+			model.addAttribute("loggedIn", true);
+		
+		BlogPost blogPost = blogService.getBlogPostById(Long.valueOf(1L));
+		model.addAttribute("blog", blogPost);
+		return "blog-post";
 	}
 
 	@PostMapping("/register")
