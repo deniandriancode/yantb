@@ -13,7 +13,9 @@
 
     <section>
       <ul th:each="blog : ${blogs}">
-	<li th:text="${blog.title}"></li>
+	<li>
+	  <a th:href="@{/blog/} + ${username} + @{/post/} + ${blog.slugTitle}" th:text="${blog.title}"></a>
+	</li>
       </ul>
     </section>
     

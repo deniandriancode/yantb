@@ -22,6 +22,9 @@ public class BlogPost {
 	private String title;
 
 	@NotEmpty
+	private String slugTitle;
+
+	@NotEmpty
 	@Column(columnDefinition = "TEXT")
 	private String content;
 
@@ -33,7 +36,8 @@ public class BlogPost {
 
 	}
 
-	public BlogPost(String title, String content, BlogUser author) {
+	public BlogPost(String title, String slugTitle, String content, BlogUser author) {
+		this.slugTitle = slugTitle;
 		this.title = title;
 		this.content = content;
 		this.author = author;
@@ -69,6 +73,14 @@ public class BlogPost {
 
 	public void setTitle(String title) {
 		this.title = title;
+	}
+
+	public String getSlugTitle() {
+		return slugTitle;
+	}
+
+	public void setSlugTitle(String slugTitle) {
+		this.slugTitle = slugTitle;
 	}
 
 }

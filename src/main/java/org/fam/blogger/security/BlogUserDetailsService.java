@@ -20,9 +20,9 @@ public class BlogUserDetailsService implements UserDetailsService {
 	BlogService blogService;
 
 	@Override
-	public UserDetails loadUserByUsername(String usernameOrEmail)
+	public UserDetails loadUserByUsername(String username)
 			throws UsernameNotFoundException { // here I use email actually
-		Optional<BlogUser> checkBlogUser = blogService.findUserByEmail(usernameOrEmail);
+		Optional<BlogUser> checkBlogUser = blogService.findUserByUsername(username);
 		if (checkBlogUser.isEmpty()) {
 			throw new UsernameNotFoundException("Invalid username or password");
 		}
@@ -30,7 +30,7 @@ public class BlogUserDetailsService implements UserDetailsService {
 		BlogUser blogUser = checkBlogUser.get();
 
 		return new User(
-				blogUser.getEmail(),
+				blogUser.getUsername(),
 				blogUser.getPassword(),
 				blogUser.getBlogRoles().stream()
 						.map((role) -> new SimpleGrantedAuthority(role.getRole()))

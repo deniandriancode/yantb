@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Edit | Blog</title>
+  </head>
+  <body>
+
+    <h1>Edit a Blog</h1>
+    <form action="#" th:action="@{/blog/update}" method="post" th:object="${blogPost}">
+      <label for="title">Title <br/>
+	<input name="title" id="title" type="text" th:field="*{title}"/>
+      </label><br/>
+      <p th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></p>
+      <label for="content">Content <br/>
+	<textarea cols="30" id="content" name="content" rows="10" th:field="*{content}"></textarea>
+      </label><br/>
+      <p th:if="${#fields.hasErrors('content')}" th:errors="*{content}"></p>
+      <button type="submit">Add</button>
+    </form>
+    
+  </body>
+</html>

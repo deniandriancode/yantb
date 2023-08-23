@@ -24,6 +24,8 @@ public interface BlogService {
 
 	BlogPost getBlogPostById(Long id);
 
+	BlogPost getBlogPostBySlugTitle(String slugTitle);
+
 	Optional<BlogUser> getCurrentLoggedInUser();
 
 	boolean isLoggedIn();

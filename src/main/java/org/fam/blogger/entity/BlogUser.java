@@ -25,7 +25,7 @@ public class BlogUser {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(nullable = false, length = 50)
+    @Column(nullable = false, length = 50, unique = true)
 	private String username;
 
 	@Column(nullable = false, length = 50, unique = true)
@@ -94,5 +94,13 @@ public class BlogUser {
 	public void setBlogRoles(List<BlogRole> blogRoles) {
 		this.blogRoles = blogRoles;
 	}
+
+	public List<BlogPost> getBlogPosts() {
+		return blogPosts;
+	}
+
+	public void setBlogPosts(List<BlogPost> blogPosts) {
+		this.blogPosts = blogPosts;
+	}    
 
 }

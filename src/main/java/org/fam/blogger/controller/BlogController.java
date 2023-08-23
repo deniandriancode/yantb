@@ -9,8 +9,6 @@ import org.fam.blogger.entity.BlogPost;
 import org.fam.blogger.entity.BlogUser;
 import org.fam.blogger.service.BlogService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -44,10 +42,10 @@ public class BlogController {
 
 	@GetMapping("/dashboard")
 	public String dashboardGet(Model model) {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String email = authentication.getName();
-		List<BlogPost> blogPostList = blogService.getAllBlogPostWithEmail(email);
+		BlogUser blogUser = blogService.getCurrentLoggedInUser().get();
+		List<BlogPost> blogPostList = blogUser.getBlogPosts();
 		model.addAttribute("blogs", blogPostList);
+		model.addAttribute("username", blogUser.getUsername());
 		return "dashboard";
 	}
 
@@ -61,10 +59,23 @@ public class BlogController {
 			Model model) {
 		if (blogService.isLoggedIn())
 			model.addAttribute("loggedIn", true);
-		
-		BlogPost blogPost = blogService.getBlogPostById(Long.valueOf(1L));
+
+		Optional<BlogUser> blogAuthor = blogService.findUserByUsername(username);
+		List<BlogPost> blogPostList = blogAuthor.get().getBlogPosts();
+		BlogPost blogPost = new BlogPost();
+		for (BlogPost b : blogPostList) {
+			if (b.getSlugTitle().equals(slug)) {
+				blogPost = b;
+				break;
+			}
+		}
 		model.addAttribute("blog", blogPost);
 		return "blog-post";
+	}
+
+	@GetMapping("/blog/update/{id}")
+	public String getBlogUpdateForm(@PathVariable("id") Long id, Model model) {
+		return "user-blog-update";
 	}
 
 	@PostMapping("/register")
@@ -74,7 +85,7 @@ public class BlogController {
 			return "register";
 		}
 
-		Optional<BlogUser> existingUser = blogService.findUserByEmail(blogUserDto.getEmail());
+		Optional<BlogUser> existingUser = blogService.findUserByUsername(blogUserDto.getUsername());
 		if (existingUser.isPresent()) {
 			model.addAttribute("userExistsError", true);
 			return "register";

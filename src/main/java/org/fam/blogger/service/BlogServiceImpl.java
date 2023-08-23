@@ -13,6 +13,7 @@ import org.fam.blogger.entity.BlogUser;
 import org.fam.blogger.repository.BlogPostRepository;
 import org.fam.blogger.repository.BlogRoleRepository;
 import org.fam.blogger.repository.BlogUserRepository;
+import org.fam.blogger.util.Slug;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -34,6 +35,9 @@ public class BlogServiceImpl implements BlogService {
 
 	@Autowired
 	PasswordEncoder passwordEncoder;
+
+	@Autowired
+	Slug slug;
 
 	@Override
 	public Optional<BlogUser> findUserByEmail(String email) {
@@ -67,6 +71,7 @@ public class BlogServiceImpl implements BlogService {
 		Optional<BlogUser> blogUser = getCurrentLoggedInUser();
 		BlogPost newBlogPost = new BlogPost(
 				blogPostDto.getTitle(),
+				slug.slugify(blogPostDto.getTitle()),
 				blogPostDto.getContent(),
 				blogUser.get());
 		blogPostRepository.save(newBlogPost);
@@ -86,13 +91,18 @@ public class BlogServiceImpl implements BlogService {
 	}
 
 	@Override
+	public BlogPost getBlogPostBySlugTitle(String slugTitle) {
+		return blogPostRepository.findBySlugTitle(slugTitle).get();
+	}
+
+	@Override
 	public Optional<BlogUser> getCurrentLoggedInUser() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		if (authentication instanceof AnonymousAuthenticationToken)
 			return Optional.empty();
 
-		String email = authentication.getName();
-		Optional<BlogUser> currentLoggedInUser = findUserByEmail(email);
+		String username = authentication.getName();
+		Optional<BlogUser> currentLoggedInUser = findUserByUsername(username);
 		return currentLoggedInUser;
 	}
 

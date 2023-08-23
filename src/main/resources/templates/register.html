@@ -8,7 +8,7 @@
   <body>
 
     <form action="#" th:action="@{/register}" method="post" th:object="${blogUserDto}" autocomplete="off">
-      <p th:if="${userExistsError}">User with that email is already exists</p>
+      <p th:if="${userExistsError}">User with that username or email is already exists</p>
       <label for="username">Username
 	<input name="username" id="username" type="text" th:field="*{username}"/>
       </label><span th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></span><br/>
