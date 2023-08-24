@@ -15,6 +15,14 @@
     </nav>
 
     <h1>Home Page</h1>
+
+    <section>
+      <ul th:each="blog : ${blogs}">
+	<li th:if="${blog.author}" >
+	  <a th:href="@{/blog/} + ${blog.author.username} + @{/post/} + ${blog.slugTitle}" th:text="${blog.title}"></a>
+	</li>
+      </ul>
+    </section>
     
   </body>
 </html>

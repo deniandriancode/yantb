@@ -8,16 +8,24 @@
   <body>
 
     <h1>Edit a Blog</h1>
-    <form action="#" th:action="@{/blog/update}" method="post" th:object="${blogPost}">
+    <form action="#" th:action="@{/blog/update}" method="post" th:object="${blog}">
       <label for="title">Title <br/>
 	<input name="title" id="title" type="text" th:field="*{title}"/>
       </label><br/>
+      <input name="id" type="hidden" th:field="*{id}"/>
+      <input name="slugTitle" type="hidden" th:field="*{slugTitle}"/>
+      <input name="author" type="hidden" th:field="*{author}"/>
       <p th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></p>
       <label for="content">Content <br/>
 	<textarea cols="30" id="content" name="content" rows="10" th:field="*{content}"></textarea>
       </label><br/>
       <p th:if="${#fields.hasErrors('content')}" th:errors="*{content}"></p>
-      <button type="submit">Add</button>
+      <button type="submit">Update</button>
+    </form>
+
+    <form action="#" th:action="@{/blog/delete}" method="post">
+      <input name="id" type="hidden" th:value="${blog.id}"/>
+      <button type="submit">Delete</button>
     </form>
     
   </body>

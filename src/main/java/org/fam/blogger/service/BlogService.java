@@ -22,12 +22,20 @@ public interface BlogService {
 
 	List<BlogPost> getAllBlogPostWithEmail(String email);
 
+	List<BlogPost> getAllBlogPost();
+
 	BlogPost getBlogPostById(Long id);
 
 	BlogPost getBlogPostBySlugTitle(String slugTitle);
 
+	void updateBlogPost(BlogPost blogPost, Long id);
+
+	void deleteBlogPostWithId(Long id);
+
 	Optional<BlogUser> getCurrentLoggedInUser();
 
 	boolean isLoggedIn();
+
+	String renderContent(String rawContent);
 
 }

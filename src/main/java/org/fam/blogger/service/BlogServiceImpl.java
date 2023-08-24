@@ -13,6 +13,7 @@ import org.fam.blogger.entity.BlogUser;
 import org.fam.blogger.repository.BlogPostRepository;
 import org.fam.blogger.repository.BlogRoleRepository;
 import org.fam.blogger.repository.BlogUserRepository;
+import org.fam.blogger.util.Markdown;
 import org.fam.blogger.util.Slug;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -38,6 +39,9 @@ public class BlogServiceImpl implements BlogService {
 
 	@Autowired
 	Slug slug;
+
+	@Autowired
+	Markdown markdown;
 
 	@Override
 	public Optional<BlogUser> findUserByEmail(String email) {
@@ -78,10 +82,31 @@ public class BlogServiceImpl implements BlogService {
 	}
 
 	@Override
+	public void updateBlogPost(BlogPost blogPost, Long id) {
+		BlogPost updatedBlogPost = new BlogPost(
+				blogPost.getTitle(),
+				slug.slugify(blogPost.getTitle()),
+				blogPost.getContent(),
+				blogPost.getAuthor());
+		updatedBlogPost.setId(id);
+		blogPostRepository.save(updatedBlogPost);
+	}
+
+	@Override
+	public void deleteBlogPostWithId(Long id) {
+		blogPostRepository.deleteById(id);
+	}
+
+	@Override
 	public List<BlogPost> getAllBlogPostWithEmail(String email) {
 		BlogUser author = findUserByEmail(email).get();
 		List<BlogPost> blogPostList = blogPostRepository.findByAuthor(author);
 		return blogPostList;
+	}
+
+	@Override
+	public List<BlogPost> getAllBlogPost() {
+	    return blogPostRepository.findAll();
 	}
 
 	@Override
@@ -109,6 +134,11 @@ public class BlogServiceImpl implements BlogService {
 	@Override
 	public boolean isLoggedIn() {
 		return getCurrentLoggedInUser().isPresent();
+	}
+
+	@Override
+	public String renderContent(String rawContent) {
+		return markdown.render(rawContent);
 	}
 
 }

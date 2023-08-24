@@ -26,7 +26,9 @@ public class BlogController {
 	BlogService blogService;
 
 	@GetMapping("/")
-	public String homePage() {
+	public String homePage(Model model) {
+		List<BlogPost> blogPosts = blogService.getAllBlogPost();
+		model.addAttribute("blogs", blogPosts);
 		return blogService.isLoggedIn() ? "home-auth" : "home";
 	}
 
@@ -70,11 +72,14 @@ public class BlogController {
 			}
 		}
 		model.addAttribute("blog", blogPost);
+		model.addAttribute("blogHTMLContent", blogService.renderContent(blogPost.getContent()));
 		return "blog-post";
 	}
 
 	@GetMapping("/blog/update/{id}")
-	public String getBlogUpdateForm(@PathVariable("id") Long id, Model model) {
+	public String getBlogUpdateForm(@PathVariable("id") Long id, BlogPostDto blogPostDto, Model model) {
+		BlogPost detailBlogPost = blogService.getBlogPostById(id);
+		model.addAttribute("blog", detailBlogPost);
 		return "user-blog-update";
 	}
 
@@ -105,6 +110,24 @@ public class BlogController {
 
 		blogService.saveBlogPost(blogPostDto);
 
+		return "redirect:/dashboard";
+	}
+
+	@PostMapping("/blog/update")
+	public String updateBlogPost(@Valid @ModelAttribute("blog") BlogPost blogPost, Model model,
+			BindingResult bindingResult) {
+		if (bindingResult.hasErrors()) {
+			return "user-blog-update";
+		}
+
+		blogService.updateBlogPost(blogPost, blogPost.getId());
+
+		return "redirect:/dashboard";
+	}
+
+	@PostMapping("/blog/delete")
+	public String deleteBlogPost(@ModelAttribute("id") Long id) {
+		blogService.deleteBlogPostWithId(id);
 		return "redirect:/dashboard";
 	}
 
